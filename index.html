@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Positron AI × Salesforce — Scaling the Commercial Engine Behind a $5B Story</title>
+<style>
+:root{
+  color-scheme: light;
+  --sf-blue:#0176D3;
+  --sf-blue-dark:#014486;
+  --sf-ink:#032D60;
+  --pos-accent:#FF5A1F;
+  --pos-accent-dark:#C43E0E;
+  --ink:#12181F;
+  --ink-soft:#4B5563;
+  --paper:#FFFFFF;
+  --paper-tint:#F4F6F9;
+  --line:#E3E8EF;
+  --dark-bg:#0B0F14;
+  --dark-bg-2:#111823;
+  --dark-line:rgba(255,255,255,0.12);
+  --radius:16px;
+  --shadow: 0 20px 50px -20px rgba(3,45,96,0.25);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family: inherit;
+  line-height:1.05;
+  letter-spacing:-0.02em;
+  margin:0;
+}
+p{margin:0;}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+.eyebrow{
+  text-transform:uppercase;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  color:var(--sf-blue);
+  margin-bottom:14px;
+  display:block;
+}
+.eyebrow.on-dark{color:#7DC6FF;}
+section{padding:100px 0;}
+@media (max-width:720px){ section{padding:64px 0;} .wrap{padding:0 20px;} }
+
+/* ---------- NAV ---------- */
+#nav{
+  position:sticky; top:0; z-index:100;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+#nav .inner{
+  max-width:1180px;margin:0 auto;padding:14px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.lockup{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;}
+.lockup .pos{color:var(--ink);}
+.lockup .x{color:var(--ink-soft);font-weight:400;}
+.lockup .sf{color:var(--sf-blue);}
+.navlinks{display:flex;gap:28px;font-size:14px;font-weight:600;color:var(--ink-soft);}
+.navlinks a{text-decoration:none;transition:color .15s;}
+.navlinks a:hover{color:var(--sf-blue);}
+.navcta{
+  background:var(--sf-blue);color:#fff;border:none;padding:10px 18px;border-radius:999px;
+  font-weight:700;font-size:13.5px;cursor:pointer;text-decoration:none;
+}
+#navToggle{display:none;background:none;border:none;font-size:22px;cursor:pointer;}
+@media (max-width:720px){
+  .navlinks{display:none;}
+  #navToggle{display:block;}
+}
+
+/* ---------- HERO ---------- */
+#hero{
+  background: radial-gradient(circle at 20% 0%, #16202e 0%, var(--dark-bg) 55%), var(--dark-bg);
+  color:#fff;
+  padding:88px 0 90px;
+  position:relative;
+  overflow:hidden;
+}
+#hero::before{
+  content:"";position:absolute;inset:0;
+  background-image: radial-gradient(rgba(255,90,31,0.10) 1px, transparent 1px);
+  background-size:26px 26px;
+  opacity:.5;
+}
+#hero .inner{position:relative;z-index:2;}
+.confline{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:#9FB4CC;
+  border:1px solid rgba(255,255,255,0.18);
+  padding:7px 14px;border-radius:999px;
+  margin-bottom:28px;
+}
+.confline .dot{width:6px;height:6px;border-radius:50%;background:var(--pos-accent);}
+.herolockup{display:flex;align-items:center;gap:16px;margin-bottom:30px;flex-wrap:wrap;}
+.brandmark{
+  display:flex;align-items:center;gap:10px;
+  font-weight:800;font-size:20px;letter-spacing:-0.01em;
+}
+.brandmark svg{display:block;}
+.hero h1{
+  font-size:clamp(34px,5vw,58px);
+  font-weight:800;
+  max-width:900px;
+  margin-bottom:22px;
+}
+.hero h1 em{
+  font-style:normal;color:var(--pos-accent);
+}
+.hero .sub{
+  font-size:19px;color:#C8D3E0;max-width:720px;margin-bottom:36px;
+}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:48px;}
+.chip{
+  border:1px solid rgba(125,198,255,0.35);
+  background:rgba(125,198,255,0.08);
+  color:#BFE0FF;
+  padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600;
+}
+.herostats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media (max-width:900px){.herostats{grid-template-columns:repeat(2,1fr);}}
+.statcard{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px;padding:18px 16px;
+}
+.statcard .num{font-size:26px;font-weight:800;color:#fff;margin-bottom:4px;}
+.statcard .lbl{font-size:12.5px;color:#9FB4CC;line-height:1.4;}
+
+/* ---------- PROBLEM ---------- */
+#problem{background:var(--paper);}
+.section-head{max-width:680px;margin-bottom:56px;}
+.section-head h2{font-size:clamp(26px,3.4vw,38px);font-weight:800;margin-bottom:14px;}
+.section-head p{color:var(--ink-soft);font-size:17px;}
+.paincards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media (max-width:980px){.paincards{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.paincards{grid-template-columns:1fr;}}
+.painflip{perspective:1400px;height:290px;cursor:pointer;}
+.painflip .inner3d{
+  position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.2,.8,.2,1);
+  transform-style:preserve-3d;
+}
+.painflip.flipped .inner3d{transform:rotateY(180deg);}
+.painface{
+  position:absolute;inset:0;border-radius:var(--radius);padding:24px;
+  backface-visibility:hidden;display:flex;flex-direction:column;
+  border:1px solid var(--line);
+}
+.painfront{background:var(--paper-tint);}
+.painback{
+  background:linear-gradient(145deg,var(--sf-ink),var(--sf-blue-dark));
+  color:#fff;transform:rotateY(180deg);
+}
+.painfront .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pos-accent-dark);margin-bottom:10px;}
+.painfront h3{font-size:18px;font-weight:800;margin-bottom:10px;}
+.painfront .desc{font-size:14px;color:var(--ink-soft);margin-bottom:auto;}
+.painmetrics{display:flex;gap:14px;margin-top:14px;}
+.painmetric{}
+.painmetric .v{font-size:22px;font-weight:800;color:var(--pos-accent-dark);}
+.painmetric .k{font-size:11.5px;color:var(--ink-soft);}
+.painfront .flipcue{font-size:12px;font-weight:700;color:var(--sf-blue);margin-top:16px;}
+.painback .tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7DC6FF;margin-bottom:10px;}
+.painback h4{font-size:16px;font-weight:800;margin-bottom:10px;}
+.painsteps{list-style:none;margin:0 0 14px;padding:0;font-size:13px;display:flex;flex-direction:column;gap:6px;}
+.painsteps li{display:flex;gap:8px;align-items:flex-start;}
+.painsteps li::before{content:"→";color:var(--pos-accent);font-weight:800;}
+.painimpact{
+  margin-top:auto;font-size:12.5px;font-weight:700;background:rgba(255,255,255,0.1);
+  padding:8px 10px;border-radius:8px;
+}
+
+/* ---------- PLATFORM ---------- */
+#platform{background:var(--paper-tint);}
+.platgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+@media (max-width:980px){.platgrid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.platgrid{grid-template-columns:1fr;}}
+.platcard{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px 18px;
+}
+.platcard .icon{width:38px;height:38px;margin-bottom:14px;}
+.platcard h3{font-size:15.5px;font-weight:800;margin-bottom:8px;}
+.platcard .replaces{
+  font-size:11.5px;font-weight:700;color:var(--pos-accent-dark);margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.platcard p{font-size:13.5px;color:var(--ink-soft);}
+.platcard.keep{border-color:#BFE0FF;background:#F3F9FF;}
+.platcard.keep .replaces{color:var(--sf-blue);}
+
+/* ---------- JOURNEY ---------- */
+#journey{background:#fff;}
+.journeyrow{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+@media (max-width:980px){.journeyrow{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:640px){.journeyrow{grid-template-columns:1fr;}}
+.jstage{
+  background:var(--paper-tint);border-radius:14px;padding:18px 14px;position:relative;
+  border:1px solid var(--line);
+}
+.jstage .n{
+  width:26px;height:26px;border-radius:50%;background:var(--sf-blue);color:#fff;
+  font-size:12.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.jstage h4{font-size:14px;font-weight:800;margin-bottom:6px;}
+.jstage .prod{font-size:11.5px;color:var(--sf-blue);font-weight:700;margin-bottom:6px;}
+.jstage .rep{font-size:11px;color:var(--pos-accent-dark);font-weight:700;}
+
+/* ---------- PILLARS (interactive) ---------- */
+#pillars{background:linear-gradient(180deg,#fff, var(--paper-tint));}
+.pillar{margin-bottom:64px;}
+.pillar:last-child{margin-bottom:0;}
+.pillarhead{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+.pillarhead h3{font-size:24px;font-weight:800;max-width:640px;}
+.pillarhead p{color:var(--ink-soft);font-size:14.5px;max-width:520px;}
+.pillarbox{
+  background:var(--dark-bg-2);border-radius:20px;padding:30px;color:#fff;
+  border:1px solid var(--dark-line);
+}
+/* Pillar 1: pipeline unifier stepper */
+.stepper-controls{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
+.stepbtn{
+  background:rgba(255,255,255,0.06);border:1px solid var(--dark-line);color:#C8D3E0;
+  padding:9px 16px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;
+}
+.stepbtn.active{background:var(--sf-blue);color:#fff;border-color:var(--sf-blue);}
+.pipeviz{display:grid;grid-template-columns:1fr 1fr;gap:18px;min-height:220px;}
+@media (max-width:720px){.pipeviz{grid-template-columns:1fr;}}
+.pipecol{background:rgba(255,255,255,0.04);border-radius:14px;padding:18px;border:1px solid var(--dark-line);}
+.pipecol h5{font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;color:#9FB4CC;margin-bottom:12px;}
+.dealrow{
+  display:flex;justify-content:space-between;background:rgba(255,255,255,0.05);
+  padding:9px 12px;border-radius:8px;margin-bottom:8px;font-size:13px;
+  transition:all .4s;
+}
+.dealrow .amt{color:var(--pos-accent);font-weight:700;}
+.pipe-merged .dealrow .amt{color:#7DC6FF;}
+.pipestate2 .pipecol, .pipestate3 .pipecol{opacity:0.35;transform:scale(0.98);}
+.mergednote{margin-top:16px;padding:14px;border-radius:10px;background:rgba(1,118,211,0.15);border:1px solid rgba(125,198,255,0.3);font-size:13px;display:none;}
+.pipestate2 .mergednote{display:block;}
+.mergedtotal{display:none;text-align:center;padding:22px;font-size:15px;}
+.mergedtotal .big{font-size:34px;font-weight:800;color:#7DC6FF;display:block;margin-bottom:6px;}
+.pipestate3 .mergedtotal{display:block;}
+.pipestate3 .pipeviz{display:none;}
+
+/* Pillar 2: quote toggle before/after */
+.qtoggle{display:flex;gap:10px;margin-bottom:22px;}
+.qpane{display:none;}
+.qpane.show{display:block;}
+.quoterow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--dark-line);font-size:13.5px;}
+.quoterow:last-child{border-bottom:none;}
+.qmess{
+  background:rgba(255,90,31,0.1);border:1px dashed rgba(255,90,31,0.4);border-radius:10px;
+  padding:16px;font-size:13px;color:#FFC7A8;margin-top:14px;
+}
+.qclean{
+  background:rgba(1,118,211,0.12);border:1px solid rgba(125,198,255,0.3);border-radius:10px;
+  padding:16px;font-size:13px;color:#BFE0FF;margin-top:14px;
+}
+
+/* ---------- AGENTFORCE ---------- */
+#agentforce{background:var(--dark-bg);color:#fff;}
+#agentforce .section-head p{color:#9FB4CC;}
+#agentforce .section-head h2{color:#fff;}
+.agentgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media (max-width:900px){.agentgrid{grid-template-columns:1fr;}}
+.agentcard{
+  background:rgba(255,255,255,0.04);border:1px solid var(--dark-line);border-radius:var(--radius);
+  padding:26px;
+}
+.agenticon{
+  width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--sf-blue),var(--pos-accent));
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:18px;
+}
+.agentcard h3{font-size:17px;font-weight:800;margin-bottom:12px;}
+.agentmeta{display:flex;flex-direction:column;gap:8px;font-size:13px;color:#C8D3E0;}
+.agentmeta b{color:#fff;font-weight:700;}
+
+/* ---------- ROI ---------- */
+#roi{background:#fff;}
+.roiwrap{display:grid;grid-template-columns:1.15fr 0.85fr;gap:32px;}
+@media (max-width:980px){.roiwrap{grid-template-columns:1fr;}}
+.roicats{display:flex;flex-direction:column;gap:18px;}
+.roicat{
+  border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--paper-tint);
+}
+.roicat h4{font-size:15.5px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;}
+.roicat .catval{color:var(--sf-blue);}
+.sliderow{margin-bottom:14px;}
+.sliderow:last-child{margin-bottom:0;}
+.sliderow label{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+.sliderow label b{color:var(--ink);}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:5px;border-radius:999px;background:var(--line);outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--sf-blue);cursor:pointer;
+  box-shadow:0 0 0 4px rgba(1,118,211,0.15);
+}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--sf-blue);cursor:pointer;border:none;}
+.enabledby{font-size:11.5px;color:var(--ink-soft);margin-top:4px;}
+.enabledby b{color:var(--pos-accent-dark);}
+.roitotal{
+  position:sticky;top:100px;background:linear-gradient(160deg,var(--sf-ink),var(--sf-blue-dark));
+  color:#fff;border-radius:20px;padding:32px;height:fit-content;
+}
+.roitotal .lbl{font-size:13px;color:#BFE0FF;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:10px;}
+.roitotal .big{font-size:44px;font-weight:800;margin-bottom:6px;}
+.roitotal .sub{font-size:13px;color:#BFE0FF;margin-bottom:24px;}
+.roiformula{font-size:11.5px;color:#9FB4CC;background:rgba(255,255,255,0.07);padding:12px;border-radius:10px;margin-bottom:10px;}
+.roinote{font-size:11.5px;color:#9FB4CC;margin-top:16px;}
+
+/* ---------- PROOF ---------- */
+#proof{background:var(--paper-tint);}
+.proofcard{
+  display:grid;grid-template-columns:0.4fr 0.6fr;gap:0;background:#fff;border-radius:var(--radius);
+  overflow:hidden;border:1px solid var(--line);
+}
+@media (max-width:800px){.proofcard{grid-template-columns:1fr;}}
+.proofleft{
+  background:linear-gradient(150deg,var(--sf-ink),var(--sf-blue-dark));color:#fff;padding:36px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.prooflogo{font-size:22px;font-weight:800;margin-bottom:16px;}
+.proofstats{display:flex;gap:22px;}
+.proofstats .v{font-size:26px;font-weight:800;}
+.proofstats .k{font-size:11.5px;color:#BFE0FF;}
+.proofright{padding:36px;}
+.proofright .quote{font-size:19px;font-weight:600;color:var(--ink);margin-bottom:16px;line-height:1.5;}
+.proofright .cite{font-size:13px;color:var(--ink-soft);margin-bottom:16px;}
+.proofright a{color:var(--sf-blue);font-weight:700;font-size:13.5px;text-decoration:none;}
+
+/* ---------- ROADMAP ---------- */
+#roadmap{background:#fff;}
+.phasegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media (max-width:900px){.phasegrid{grid-template-columns:1fr;}}
+.phasecard{border:1px solid var(--line);border-radius:var(--radius);padding:26px;position:relative;}
+.phasecard .pnum{
+  position:absolute;top:-14px;left:24px;background:var(--sf-blue);color:#fff;font-size:12px;font-weight:800;
+  padding:4px 12px;border-radius:999px;
+}
+.phasecard h3{font-size:17px;font-weight:800;margin:10px 0 10px;}
+.phasecard .scope{font-size:13.5px;color:var(--ink-soft);margin-bottom:14px;}
+.milestone{
+  background:var(--paper-tint);border-radius:10px;padding:10px 12px;font-size:12.5px;font-weight:700;
+  color:var(--pos-accent-dark);
+}
+
+/* ---------- CLOSE ---------- */
+#close{
+  background:radial-gradient(circle at 80% 20%, #16202e 0%, var(--dark-bg) 60%), var(--dark-bg);
+  color:#fff;text-align:center;
+}
+#close h2{font-size:clamp(28px,4vw,42px);font-weight:800;max-width:720px;margin:0 auto 18px;}
+#close p{color:#C8D3E0;font-size:17px;max-width:600px;margin:0 auto 34px;}
+.closebtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{
+  background:var(--sf-blue);color:#fff;padding:15px 30px;border-radius:999px;font-weight:800;font-size:15px;
+  text-decoration:none;border:none;cursor:pointer;
+}
+.btn-secondary{
+  background:transparent;color:#fff;padding:15px 30px;border-radius:999px;font-weight:700;font-size:15px;
+  text-decoration:none;border:1px solid rgba(255,255,255,0.3);cursor:pointer;
+}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--dark-bg);color:#7C8CA0;padding:36px 0;font-size:12px;border-top:1px solid var(--dark-line);}
+footer .fwrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+footer .disc{max-width:640px;}
+
+/* reveal-on-scroll */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1;transform:none;transition:none;}
+  .painflip .inner3d{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="inner">
+    <div class="lockup">
+      <span class="pos">Positron AI</span><span class="x">×</span><span class="sf">Salesforce</span>
+    </div>
+    <div class="navlinks">
+      <a href="#problem">The Problem</a>
+      <a href="#platform">The Platform</a>
+      <a href="#roi">ROI Model</a>
+      <a href="#roadmap">Roadmap</a>
+    </div>
+    <a href="#close" class="navcta">Book a Technical Review</a>
+    <button id="navToggle" aria-label="Menu">☰</button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header id="hero">
+  <div class="wrap inner">
+    <div class="confline"><span class="dot"></span> Confidential · Prepared for Positron AI Leadership · September 2026</div>
+
+    <div class="herolockup">
+      <div class="brandmark">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="13" stroke="#FF5A1F" stroke-width="2.4"/><circle cx="15" cy="15" r="3.5" fill="#FF5A1F"/><ellipse cx="15" cy="15" rx="13" ry="5" stroke="#FF5A1F" stroke-width="1.4" opacity="0.6"/></svg>
+        Positron AI
+      </div>
+      <span style="color:#5A6B80;font-size:20px;">×</span>
+      <div class="brandmark">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 2C6.4 2 1 7.4 1 14s5.4 12 12 12 12-5.4 12-12S19.6 2 13 2zm0 4c2.2 0 4 1.8 4 4h-4v4h4c0 2.2-1.8 4-4 4s-4-1.8-4-4V10c0-2.2 1.8-4 4-4z" fill="#0176D3"/></svg>
+        Salesforce
+      </div>
+    </div>
+
+    <h1>You just raised at a <em>$5B</em> valuation.<br>Your commercial stack is still priced like a seed round.</h1>
+    <p class="sub">In seven months Positron went from a $1B Series B to an $875M raise at a $5B valuation — the fastest climb of any hardware startup in this cycle. HubSpot was built to run that seed-stage motion. It wasn't built to run this one.</p>
+
+    <div class="chips">
+      <span class="chip">Sales Cloud</span>
+      <span class="chip">Revenue Cloud (CPQ)</span>
+      <span class="chip">Slack — already yours</span>
+      <span class="chip">Tableau</span>
+      <span class="chip">Data Cloud + Agentforce</span>
+    </div>
+
+    <div class="herostats">
+      <div class="statcard"><div class="num">$5B</div><div class="lbl">Post-money valuation, Sept 2026 Series C — 5× the Series B from 7 months earlier</div></div>
+      <div class="statcard"><div class="num">$1.1B+</div><div class="lbl">Total capital raised across Seed, Series A, B and C in under 20 months</div></div>
+      <div class="statcard"><div class="num">100+</div><div class="lbl">Employees across the US, Canada and Israel — and still hiring fast</div></div>
+      <div class="statcard"><div class="num">3</div><div class="lbl">Hardware lines to sell and support at once: Atlas (shipping), Asimov, Titan</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ PROBLEM ============ -->
+<section id="problem">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Problem</span>
+      <h2>Five hardware-line, multi-billion-dollar growth doesn't run on a marketing CRM.</h2>
+      <p>Every pain below traces to something public about how fast Positron is moving — and to friction patterns AE conversations with your team have already started to surface. Click a card to see the fix.</p>
+    </div>
+
+    <div class="paincards">
+
+      <div class="painflip reveal" onclick="this.classList.toggle('flipped')">
+        <div class="inner3d">
+          <div class="painface painfront">
+            <span class="tag">Pipeline</span>
+            <h3>Two go-to-market motions, one number to the board</h3>
+            <p class="desc">Fast-scaling hardware companies almost always end up running direct enterprise sales and channel/partner-sourced deals through separate systems — with no single, defensible view of total committed pipeline.</p>
+            <div class="painmetrics">
+              <div class="painmetric"><div class="v">$0</div><div class="k">unified direct + partner forecast today</div></div>
+            </div>
+            <span class="flipcue">See the fix →</span>
+          </div>
+          <div class="painface painback">
+            <span class="tag">Sales Cloud + Partner Relationship Mgmt</span>
+            <h4>One pipeline, every source</h4>
+            <ul class="painsteps">
+              <li>Direct and partner-sourced opportunities land in one object model</li>
+              <li>Partner portal gives resellers self-serve deal registration</li>
+              <li>One roll-up forecast replaces two spreadsheets stitched together</li>
+            </ul>
+            <div class="painimpact">Board impact: one defensible number, not two reconciled ones.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="painflip reveal" onclick="this.classList.toggle('flipped')">
+        <div class="inner3d">
+          <div class="painface painfront">
+            <span class="tag">Quoting</span>
+            <h3>Quoting multiple hardware generations by hand</h3>
+            <p class="desc">Atlas ships today; Asimov and Titan are on a public path to production over the next year. A three-product-line hardware roadmap is exactly the kind of complexity a marketing-CRM quoting tool was never built to configure.</p>
+            <div class="painmetrics">
+              <div class="painmetric"><div class="v">3×</div><div class="k">product lines to quote with no CPQ engine</div></div>
+            </div>
+            <span class="flipcue">See the fix →</span>
+          </div>
+          <div class="painface painback">
+            <span class="tag">Revenue Cloud (CPQ)</span>
+            <h4>Configure once, quote any generation</h4>
+            <ul class="painsteps">
+              <li>Guided configurator for rack count, power envelope, memory tier</li>
+              <li>Pricing rules update automatically as Asimov and Titan go GA</li>
+              <li>Approval workflows replace email chains for non-standard terms</li>
+            </ul>
+            <div class="painimpact">Sales impact: quote turnaround measured in hours, not review cycles.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="painflip reveal" onclick="this.classList.toggle('flipped')">
+        <div class="inner3d">
+          <div class="painface painfront">
+            <span class="tag">Forecasting</span>
+            <h3>Board-grade forecasting outgrows spreadsheet math fast</h3>
+            <p class="desc">Companies moving through back-to-back financing rounds this quickly typically hit a point where pipeline coverage needs to be calculated live and defensibly — not assembled by hand before every board meeting.</p>
+            <div class="painmetrics">
+              <div class="painmetric"><div class="v">1</div><div class="k">manual export standing between pipeline and the board deck</div></div>
+            </div>
+            <span class="flipcue">See the fix →</span>
+          </div>
+          <div class="painface painback">
+            <span class="tag">Sales Cloud Forecasting + Tableau</span>
+            <h4>Board-ready, always current</h4>
+            <ul class="painsteps">
+              <li>Forecast categories and coverage ratios calculated live from CRM data</li>
+              <li>Tableau dashboards embed directly into the board deck workflow</li>
+              <li>Historical trend lines show whether commitments are tightening or slipping</li>
+            </ul>
+            <div class="painimpact">Leadership impact: the number in the deck matches the number in the system.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="painflip reveal" onclick="this.classList.toggle('flipped')">
+        <div class="inner3d">
+          <div class="painface painfront">
+            <span class="tag">Operations</span>
+            <h3>Support questions default to whoever's nearest — often an engineer</h3>
+            <p class="desc">Without a triage layer in front of them, technical questions from partners and customers tend to land wherever they're easiest to ask — which in a lean, engineering-heavy org usually means an engineer's inbox.</p>
+            <div class="painmetrics">
+              <div class="painmetric"><div class="v">0</div><div class="k">automated triage steps between a partner's Slack message and an engineer</div></div>
+            </div>
+            <span class="flipcue">See the fix →</span>
+          </div>
+          <div class="painface painback">
+            <span class="tag">Service Cloud + Slack (already yours)</span>
+            <h4>Triage before it reaches engineering</h4>
+            <ul class="painsteps">
+              <li>Cases created directly from the Slack channels you already run</li>
+              <li>Known-issue and spec questions resolved without a ticket to engineering</li>
+              <li>Only genuinely novel technical questions escalate — with context attached</li>
+            </ul>
+            <div class="painimpact">Ops impact: engineering time protected for engineering problems.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="painflip reveal" onclick="this.classList.toggle('flipped')">
+        <div class="inner3d">
+          <div class="painface painfront">
+            <span class="tag">Marketing</span>
+            <h3>Pipeline attribution rarely survives the marketing-to-sales handoff</h3>
+            <p class="desc">Marketing functions built from the ground up during a growth sprint often can't trace which programs actually convert to sales pipeline — the data usually lives on the wrong side of the handoff to prove it.</p>
+            <div class="painmetrics">
+              <div class="painmetric"><div class="v">0%</div><div class="k">attribution visibility past the handoff to sales today</div></div>
+            </div>
+            <span class="flipcue">See the fix →</span>
+          </div>
+          <div class="painface painback">
+            <span class="tag">Data Cloud + Sales Cloud</span>
+            <h4>One record, from first touch to closed deal</h4>
+            <ul class="painsteps">
+              <li>Marketing and sales activity unify on the same customer record</li>
+              <li>Campaign-to-pipeline attribution survives the handoff automatically</li>
+              <li>Marketing can finally show which programs move revenue, not just leads</li>
+            </ul>
+            <div class="painimpact">Marketing impact: a real answer to "what's working," backed by data.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="painflip reveal" onclick="this.classList.toggle('flipped')">
+        <div class="inner3d">
+          <div class="painface painfront">
+            <span class="tag">Headcount</span>
+            <h3>Growth and manual ops load tend to move 1:1</h3>
+            <p class="desc">Without automation in the revenue workflow, each new customer, partner, or hardware SKU adds work that has to be re-keyed, chased, or reconciled by a person — a pattern that catches up with lean teams fast.</p>
+            <div class="painmetrics">
+              <div class="painmetric"><div class="v">1:1</div><div class="k">today's ratio of growth to manual ops load</div></div>
+            </div>
+            <span class="flipcue">See the fix →</span>
+          </div>
+          <div class="painface painback">
+            <span class="tag">Agentforce</span>
+            <h4>Growth that doesn't require a 1:1 headcount add</h4>
+            <ul class="painsteps">
+              <li>Agents draft quotes, update records, and flag at-risk deals automatically</li>
+              <li>Renewal and true-up cycles (like the one already running in Slack) get proactive nudges</li>
+              <li>Ops capacity scales with revenue, not with req count</li>
+            </ul>
+            <div class="painimpact">Ops impact: the lean team stays lean on purpose, not by accident.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLATFORM ============ -->
+<section id="platform">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Platform</span>
+      <h2>What's actually in this footprint</h2>
+      <p>Not a rip-and-replace of everything at once — a defined set of products, each solving one named problem above. Slack you already run; everything else extends it.</p>
+    </div>
+    <div class="platgrid">
+      <div class="platcard reveal">
+        <svg class="icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#0176D3"/><path d="M12 20h16M20 12v16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <div class="replaces">Replaces: HubSpot CRM</div>
+        <h3>Sales Cloud</h3>
+        <p>Unified pipeline across direct and partner motion, with forecasting built for board-level scrutiny.</p>
+      </div>
+      <div class="platcard reveal">
+        <svg class="icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#FF5A1F"/><path d="M13 27l6-14 6 14" stroke="#fff" stroke-width="2.2" fill="none" stroke-linejoin="round"/></svg>
+        <div class="replaces">Replaces: manual quote spreadsheets</div>
+        <h3>Revenue Cloud (CPQ)</h3>
+        <p>One configurator for Atlas, Asimov, and Titan — pricing rules update as each product matures.</p>
+      </div>
+      <div class="platcard keep reveal">
+        <svg class="icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#4A154B"/><circle cx="15" cy="15" r="4.5" fill="#fff"/><circle cx="25" cy="15" r="4.5" fill="#fff" opacity="0.6"/><circle cx="15" cy="25" r="4.5" fill="#fff" opacity="0.6"/><circle cx="25" cy="25" r="4.5" fill="#fff"/></svg>
+        <div class="replaces">Already yours — extended, not replaced</div>
+        <h3>Slack</h3>
+        <p>Same workspace your team runs today, now wired directly into cases, deal alerts, and agent actions.</p>
+      </div>
+      <div class="platcard reveal">
+        <svg class="icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#00A1E0"/><rect x="11" y="21" width="4" height="8" fill="#fff"/><rect x="18" y="15" width="4" height="14" fill="#fff"/><rect x="25" y="10" width="4" height="19" fill="#fff"/></svg>
+        <div class="replaces">Replaces: manual board-deck exports</div>
+        <h3>Tableau</h3>
+        <p>Live dashboards for pipeline coverage, hardware-line mix, and forecast trend — board-ready by default.</p>
+      </div>
+      <div class="platcard reveal">
+        <svg class="icon" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#032D60"/><path d="M20 11l9 5v8l-9 5-9-5v-8z" stroke="#7DC6FF" stroke-width="2" fill="none"/><circle cx="20" cy="20" r="2.6" fill="#7DC6FF"/></svg>
+        <div class="replaces">Replaces: nothing — this doesn't exist yet</div>
+        <h3>Data Cloud + Agentforce</h3>
+        <p>One customer record across marketing, sales, and ops — with agents acting on it, not just reporting on it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOURNEY ============ -->
+<section id="journeymap">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Journey</span>
+      <h2>How a rack actually gets sold and shipped</h2>
+      <p>Positron's own operating flow, mapped stage by stage to what runs it today versus what replaces it.</p>
+    </div>
+    <div class="journeyrow">
+      <div class="jstage reveal"><div class="n">1</div><h4>Lead (direct or partner)</h4><div class="prod">Sales Cloud</div><div class="rep">Replaces: two disconnected intake paths</div></div>
+      <div class="jstage reveal"><div class="n">2</div><h4>Qualify & scope workload</h4><div class="prod">Sales Cloud</div><div class="rep">Replaces: HubSpot deal stages</div></div>
+      <div class="jstage reveal"><div class="n">3</div><h4>Configure & quote hardware</h4><div class="prod">Revenue Cloud</div><div class="rep">Replaces: manual spec spreadsheets</div></div>
+      <div class="jstage reveal"><div class="n">4</div><h4>Contract & close</h4><div class="prod">Sales Cloud</div><div class="rep">Replaces: email-based approvals</div></div>
+      <div class="jstage reveal"><div class="n">5</div><h4>Deploy & support racks</h4><div class="prod">Service Cloud + Slack</div><div class="rep">Replaces: ad hoc engineering pings</div></div>
+      <div class="jstage reveal"><div class="n">6</div><h4>Renew, expand, report</h4><div class="prod">Tableau + Agentforce</div><div class="rep">Replaces: manual board-deck prep</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILLARS ============ -->
+<section id="pillars">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Deep Dive</span>
+      <h2>Two things worth seeing in motion</h2>
+      <p>Illustrative mockups — not production screens — built to show the shape of what changes.</p>
+    </div>
+
+    <div class="pillar reveal">
+      <div class="pillarhead">
+        <h3>Direct + partner pipeline, unified into one forecast</h3>
+        <p>Click through the three states below.</p>
+      </div>
+      <div class="pillarbox" id="pipeBox">
+        <div class="stepper-controls">
+          <button class="stepbtn active" data-state="1" onclick="setPipeState(1)">1. Today: two systems</button>
+          <button class="stepbtn" data-state="2" onclick="setPipeState(2)">2. Unify in Sales Cloud</button>
+          <button class="stepbtn" data-state="3" onclick="setPipeState(3)">3. One forecast</button>
+        </div>
+        <div class="pipeviz">
+          <div class="pipecol">
+            <h5>Direct enterprise (HubSpot / spreadsheet)</h5>
+            <div class="dealrow"><span>Oracle Cloud — 50+ racks</span><span class="amt">Tracked</span></div>
+            <div class="dealrow"><span>Jump Trading — Atlas deployment</span><span class="amt">Tracked</span></div>
+            <div class="dealrow"><span>Cloudflare — inference capacity</span><span class="amt">Tracked</span></div>
+          </div>
+          <div class="pipecol">
+            <h5>Partner-sourced (untracked in CRM)</h5>
+            <div class="dealrow"><span>i3d.net — reseller motion</span><span class="amt">Off-system</span></div>
+            <div class="dealrow"><span>Parasail / SnapServe capacity</span><span class="amt">Off-system</span></div>
+            <div class="dealrow"><span>New partner intros this quarter</span><span class="amt">Off-system</span></div>
+          </div>
+        </div>
+        <div class="mergednote">Both feeds now write to the same Opportunity object in Sales Cloud — same fields, same forecast categories, same source of truth.</div>
+        <div class="mergedtotal"><span class="big">1 forecast</span>Direct and partner-sourced pipeline roll up together — the number the board sees is the number sales is actually managing to.</div>
+      </div>
+    </div>
+
+    <div class="pillar reveal">
+      <div class="pillarhead">
+        <h3>Quoting three hardware generations, before and after</h3>
+        <p>Toggle between today's process and the CPQ-driven version.</p>
+      </div>
+      <div class="pillarbox">
+        <div class="qtoggle">
+          <button class="stepbtn active" data-q="before" onclick="setQuote('before')">Before: manual spec sheet</button>
+          <button class="stepbtn" data-q="after" onclick="setQuote('after')">After: Revenue Cloud CPQ</button>
+        </div>
+        <div class="qpane show" id="qBefore">
+          <div class="quoterow"><span>Atlas rack count</span><span>Typed in manually per quote</span></div>
+          <div class="quoterow"><span>Power envelope check</span><span>Cross-referenced by hand against a separate sheet</span></div>
+          <div class="quoterow"><span>Asimov / Titan pricing (not yet GA)</span><span>No template exists — built from scratch</span></div>
+          <div class="quoterow"><span>Non-standard terms</span><span>Emailed to finance for approval</span></div>
+          <div class="qmess">Every quote is a fresh spreadsheet. Every new SKU means a new set of manual cross-checks. Turnaround depends on who's available.</div>
+        </div>
+        <div class="qpane" id="qAfter">
+          <div class="quoterow"><span>Atlas rack count</span><span>Selected from a guided configurator</span></div>
+          <div class="quoterow"><span>Power envelope check</span><span>Validated automatically against system specs</span></div>
+          <div class="quoterow"><span>Asimov / Titan pricing (as each goes GA)</span><span>Pricing rules activate the day specs are locked</span></div>
+          <div class="quoterow"><span>Non-standard terms</span><span>Routed through an approval workflow, not an inbox</span></div>
+          <div class="qclean">Same configurator, three product lines. New SKUs plug into existing pricing logic instead of starting over.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ AGENTFORCE ============ -->
+<section id="agentforce">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow on-dark">AI in the Workflow</span>
+      <h2>Three agents doing named jobs, not generic AI</h2>
+      <p>Each one triggers on something specific, decides something specific, and acts.</p>
+    </div>
+    <div class="agentgrid">
+      <div class="agentcard reveal">
+        <div class="agenticon">📊</div>
+        <h3>Deal Risk Agent</h3>
+        <div class="agentmeta">
+          <div><b>Triggers on:</b> a deal's forecast category and close date drifting out of sync across any of the three hardware lines.</div>
+          <div><b>Decides:</b> whether the drift is material enough to flag before the next forecast call.</div>
+          <div><b>Acts:</b> posts a Slack alert to the deal owner with the specific field that moved and a suggested next step.</div>
+        </div>
+      </div>
+      <div class="agentcard reveal">
+        <div class="agenticon">🔀</div>
+        <h3>Partner Triage Agent</h3>
+        <div class="agentmeta">
+          <div><b>Triggers on:</b> a technical question posted in a partner-facing Slack channel.</div>
+          <div><b>Decides:</b> whether it's a known-spec question or something genuinely novel.</div>
+          <div><b>Acts:</b> answers known questions directly; escalates novel ones to engineering with full context attached.</div>
+        </div>
+      </div>
+      <div class="agentcard reveal">
+        <div class="agenticon">📝</div>
+        <h3>Quote Assembly Agent</h3>
+        <div class="agentmeta">
+          <div><b>Triggers on:</b> a new opportunity reaching the configuration stage.</div>
+          <div><b>Decides:</b> which prior similar configuration and pricing pattern best fits the new deal.</div>
+          <div><b>Acts:</b> drafts a first-pass quote for the rep to review and send, not start from a blank sheet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROI ============ -->
+<section id="roi">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Model</span>
+      <h2>Adjust the assumptions — this is your model, not ours</h2>
+      <p>Every default below is a starting assumption, not a claim about your business. Move any slider to match how Positron actually runs.</p>
+    </div>
+    <div class="roiwrap">
+      <div class="roicats">
+
+        <div class="roicat reveal">
+          <h4>Sales productivity <span class="catval" id="v1">$0</span></h4>
+          <div class="sliderow">
+            <label><span>Enterprise + partner AEs</span><b id="l1a">6</b></label>
+            <input type="range" id="s1a" min="2" max="20" value="6" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>Hours/week saved per rep on quoting &amp; admin</span><b id="l1b">4</b></label>
+            <input type="range" id="s1b" min="1" max="12" value="4" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>Fully-loaded rep cost per hour</span><b id="l1c">$85</b></label>
+            <input type="range" id="s1c" min="40" max="150" value="85" oninput="calc()">
+          </div>
+          <div class="enabledby">Enabled by <b>Revenue Cloud CPQ</b> + <b>Quote Assembly Agent</b></div>
+        </div>
+
+        <div class="roicat reveal">
+          <h4>Partner-sourced revenue capture <span class="catval" id="v2">$0</span></h4>
+          <div class="sliderow">
+            <label><span>Partner-sourced deals per quarter</span><b id="l2a">8</b></label>
+            <input type="range" id="s2a" min="1" max="30" value="8" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>Average deal value ($K)</span><b id="l2b">180</b></label>
+            <input type="range" id="s2b" min="20" max="1000" value="180" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>% currently at risk of falling through the cracks (no shared pipeline)</span><b id="l2c">15%</b></label>
+            <input type="range" id="s2c" min="0" max="40" value="15" oninput="calc()">
+          </div>
+          <div class="enabledby">Enabled by <b>Sales Cloud</b> unified pipeline (Pillar 1)</div>
+        </div>
+
+        <div class="roicat reveal">
+          <h4>Ops headcount avoidance <span class="catval" id="v3">$0</span></h4>
+          <div class="sliderow">
+            <label><span>Additional ops/RevOps hires avoided over 18 months</span><b id="l3a">2</b></label>
+            <input type="range" id="s3a" min="0" max="6" value="2" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>Fully-loaded annual cost per hire ($K)</span><b id="l3b">145</b></label>
+            <input type="range" id="s3b" min="80" max="250" value="145" oninput="calc()">
+          </div>
+          <div class="enabledby">Enabled by <b>Agentforce</b> automation on quote, renewal, and forecast tasks</div>
+        </div>
+
+        <div class="roicat reveal">
+          <h4>Engineering time protected <span class="catval" id="v4">$0</span></h4>
+          <div class="sliderow">
+            <label><span>Engineers currently pulled into partner/support questions</span><b id="l4a">4</b></label>
+            <input type="range" id="s4a" min="0" max="15" value="4" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>Hours/week each spends on questions a triage layer could catch</span><b id="l4b">3</b></label>
+            <input type="range" id="s4b" min="0" max="10" value="3" oninput="calc()">
+          </div>
+          <div class="sliderow">
+            <label><span>Fully-loaded engineer cost per hour</span><b id="l4c">$130</b></label>
+            <input type="range" id="s4c" min="60" max="220" value="130" oninput="calc()">
+          </div>
+          <div class="enabledby">Enabled by <b>Service Cloud + Slack</b> — Partner Triage Agent</div>
+        </div>
+
+      </div>
+
+      <div class="roitotal reveal">
+        <div class="lbl">Modeled annual impact</div>
+        <div class="big" id="grandtotal">$0</div>
+        <div class="sub" id="grandsub">Move the sliders on the left to build this number</div>
+        <div class="roiformula" id="f1">Sales productivity = AEs × hrs/wk saved × 52 × hourly cost</div>
+        <div class="roiformula" id="f2">Partner capture = deals/qtr × 4 × avg value × % at-risk recovered</div>
+        <div class="roiformula" id="f3">Headcount avoidance = hires avoided × annual cost</div>
+        <div class="roiformula" id="f4">Engineering protection = engineers × hrs/wk × 52 × hourly cost</div>
+        <div class="roinote">This is a planning model built on your inputs, not a guarantee. Every number above is either public (see hero stats), an assumption you can change, or the output of the formulas shown.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROOF ============ -->
+<section id="proof">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Proof</span>
+      <h2>A lean, AI-native team running the same playbook</h2>
+    </div>
+    <div class="proofcard reveal">
+      <div class="proofleft">
+        <div class="prooflogo">Raylu</div>
+        <p style="font-size:13px;color:#BFE0FF;margin-bottom:20px;">AI-native deal origination platform for private market investors</p>
+        <div class="proofstats">
+          <div><div class="v">2×</div><div class="k">pipeline coverage</div></div>
+          <div><div class="v">0</div><div class="k">dedicated RevOps hire</div></div>
+        </div>
+      </div>
+      <div class="proofright">
+        <div class="quote">"Understanding our internal data in Salesforce lets us be highly selective about where we spend time."</div>
+        <div class="cite">— Landry, Raylu, on running Sales Cloud, Slack, and Claude together as one revenue engine</div>
+        <a href="https://www.salesforce.com/customer-stories/raylu-ai/" target="_blank" rel="noopener">Read the full story →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Roadmap</span>
+      <h2>Three phases, sequenced to how Positron actually ships</h2>
+      <p>No fixed dates assumed — paced instead to Atlas's current run rate and Asimov's move toward tape-out.</p>
+    </div>
+    <div class="phasegrid">
+      <div class="phasecard reveal">
+        <span class="pnum">Phase 1</span>
+        <h3>Unify the pipeline</h3>
+        <p class="scope">Migrate direct and partner opportunities into Sales Cloud. Stand up the shared forecast roll-up.</p>
+        <div class="milestone">Milestone: one forecast number, reviewed once, not reconciled twice.</div>
+      </div>
+      <div class="phasecard reveal">
+        <span class="pnum">Phase 2</span>
+        <h3>Quote &amp; support at scale</h3>
+        <p class="scope">Launch Revenue Cloud CPQ for Atlas today, pre-configured for Asimov ahead of tape-out. Connect Slack to Service Cloud for partner triage.</p>
+        <div class="milestone">Milestone: Asimov quoting is ready the day specs lock — not after.</div>
+      </div>
+      <div class="phasecard reveal">
+        <span class="pnum">Phase 3</span>
+        <h3>Report &amp; automate</h3>
+        <p class="scope">Tableau dashboards go live for board reporting. First Agentforce agents (Deal Risk, Partner Triage) move from pilot to production.</p>
+        <div class="milestone">Milestone: the board deck pulls from the same system sales runs on.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLOSE ============ -->
+<section id="close">
+  <div class="wrap">
+    <h2>Let's pressure-test this with your team.</h2>
+    <p>Not a proposal — a working session with your Salesforce and Slack team to see whether the pipeline unification and CPQ flow above actually fit how Positron sells today.</p>
+    <div class="closebtns">
+      <a href="#" class="btn-primary">Book a Technical Review</a>
+      <a href="#" class="btn-secondary">Ask a Question First</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap fwrap">
+    <div>Confidential · Prepared for Positron AI Leadership · September 2026</div>
+    <div class="disc">Forward-looking architecture, timelines, and Asimov/Titan availability are subject to Positron's own roadmap and are not commitments by Salesforce. Modeled figures in the ROI section are planning estimates based on user-adjustable assumptions, not guarantees.</div>
+  </div>
+</footer>
+
+<script>
+// reveal on scroll
+const els = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+},{threshold:0.12});
+els.forEach(el=>obs.observe(el));
+
+// pipeline pillar stepper
+function setPipeState(n){
+  const box = document.getElementById('pipeBox');
+  box.className = 'pillarbox pipestate'+n;
+  document.querySelectorAll('#pipeBox .stepbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('#pipeBox .stepbtn[data-state="'+n+'"]').classList.add('active');
+}
+
+// quote toggle
+function setQuote(which){
+  document.getElementById('qBefore').classList.toggle('show', which==='before');
+  document.getElementById('qAfter').classList.toggle('show', which==='after');
+  document.querySelectorAll('.qtoggle .stepbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.qtoggle .stepbtn[data-q="'+which+'"]').classList.add('active');
+}
+
+// ROI calculator
+function fmt(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+function calc(){
+  const s1a = +document.getElementById('s1a').value;
+  const s1b = +document.getElementById('s1b').value;
+  const s1c = +document.getElementById('s1c').value;
+  const s2a = +document.getElementById('s2a').value;
+  const s2b = +document.getElementById('s2b').value;
+  const s2c = +document.getElementById('s2c').value;
+  const s3a = +document.getElementById('s3a').value;
+  const s3b = +document.getElementById('s3b').value;
+  const s4a = +document.getElementById('s4a').value;
+  const s4b = +document.getElementById('s4b').value;
+  const s4c = +document.getElementById('s4c').value;
+
+  document.getElementById('l1a').textContent = s1a;
+  document.getElementById('l1b').textContent = s1b;
+  document.getElementById('l1c').textContent = '$'+s1c;
+  document.getElementById('l2a').textContent = s2a;
+  document.getElementById('l2b').textContent = s2b;
+  document.getElementById('l2c').textContent = s2c+'%';
+  document.getElementById('l3a').textContent = s3a;
+  document.getElementById('l3b').textContent = s3b;
+  document.getElementById('l4a').textContent = s4a;
+  document.getElementById('l4b').textContent = s4b;
+  document.getElementById('l4c').textContent = '$'+s4c;
+
+  const v1 = s1a * s1b * 52 * s1c;
+  const v2 = s2a * 4 * (s2b*1000) * (s2c/100);
+  const v3 = s3a * (s3b*1000);
+  const v4 = s4a * s4b * 52 * s4c;
+
+  document.getElementById('v1').textContent = fmt(v1);
+  document.getElementById('v2').textContent = fmt(v2);
+  document.getElementById('v3').textContent = fmt(v3);
+  document.getElementById('v4').textContent = fmt(v4);
+
+  const total = v1+v2+v3+v4;
+  document.getElementById('grandtotal').textContent = fmt(total);
+  document.getElementById('grandsub').textContent = 'Across sales productivity, partner-pipeline capture, headcount avoidance, and protected engineering time';
+}
+calc();
+</script>
+
+</body>
+</html>
